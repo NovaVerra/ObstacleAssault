@@ -24,11 +24,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere)
-	float	InputFloatA = 0;
-	
-	UPROPERTY(EditAnywhere)
-	float	InputFloatB = 0;
-	
-	UPROPERTY(EditAnywhere)
-	float	FloatAPlusB = 0;
+	FVector InitialLocation = FVector(0, 0, 0);
+
+	UPROPERTY(EditAnywhere, Category="Moving Platform")
+	FVector	PlatformVelocity = FVector(0, 100, 0);
+
+	FVector	StartingLocation;
+
+	UPROPERTY(VisibleAnywhere)
+	float	DistanceClamp = 100;
 };
