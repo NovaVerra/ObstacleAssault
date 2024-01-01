@@ -24,22 +24,40 @@ void AMovingPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Get moving platform's location
-	FVector	CurrentLocation = GetActorLocation();
-	// Move the platform by platform velocity
-	CurrentLocation += PlatformVelocity * DeltaTime;
-	// Update platform position
-	SetActorLocation(CurrentLocation);
+	MovePlatform(DeltaTime);
+	RotatePlatform(DeltaTime);
+}
 
-	// Calculate distance traveled by platform
-	float DistanceTraveled = FVector::Dist(StartingLocation, CurrentLocation);
-
-	// If the distance moved is beyond our clamp...
-	if (DistanceTraveled > DistanceClamp)
+void AMovingPlatform::MovePlatform(float DeltaTime)
+{
+	if (ShouldPlatformReturn())
 	{
 		FVector MoveDirection = PlatformVelocity.GetSafeNormal();
 		StartingLocation += MoveDirection * DistanceClamp;
 		SetActorLocation(StartingLocation);
 		PlatformVelocity = -PlatformVelocity;
 	}
+	else
+	{
+		FVector	CurrentLocation = GetActorLocation();
+		CurrentLocation += PlatformVelocity * DeltaTime;
+		SetActorLocation(CurrentLocation);
+	}
+}
+
+void AMovingPlatform::RotatePlatform(float DeltaTime)
+{
+	UE_LOG(LogTemp, Display, TEXT("Rotating %s"), *GetName());
+
+	AddActorLocalRotation(RotationVelocity * DeltaTime);
+}
+
+bool AMovingPlatform::ShouldPlatformReturn() const
+{
+	return GetDistanceMoved() > DistanceClamp;
+}
+
+float AMovingPlatform::GetDistanceMoved() const
+{
+	return FVector::Dist(StartingLocation, GetActorLocation());
 }
